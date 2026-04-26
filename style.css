@@ -42,10 +42,17 @@ header { position: fixed; width: 100%; top: 0; z-index: 1000; padding: 25px 5%; 
 .section-tag { display: block; font-size: 0.9rem; color: var(--accent); font-weight: 700; margin-bottom: 20px; }
 h2 { font-size: 3rem; font-weight: 900; margin-bottom: 60px; color: var(--navy); letter-spacing: -1px; }
 
-.business-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-.card { padding: 80px 45px; background: var(--white); border: 1px solid #eee; transition: 0.4s; text-align: left; }
-.card h3 { font-size: 1.5rem; color: var(--navy); margin-bottom: 25px; border-bottom: 2px solid var(--accent); display: inline-block; padding-bottom: 5px; }
-.card p { font-size: 1rem; color: #666; font-weight: 300; }
+/* 서비스 카드 업그레이드 스타일 */
+.business-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-top: 50px; }
+.card { padding: 80px 40px; background: var(--white); border: 1px solid #eee; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; position: relative; cursor: pointer; }
+.card h3 { font-size: 1.6rem; color: var(--navy); margin-bottom: 25px; font-weight: 700; letter-spacing: 1px; position: relative; padding-bottom: 15px; }
+.card h3::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 30px; height: 2px; background: var(--accent); transition: 0.5s; }
+.card p { font-size: 1rem; color: #666; line-height: 1.8; font-weight: 300; word-break: keep-all; }
+
+.card:hover { background: var(--navy); transform: translateY(-15px); box-shadow: 0 30px 60px rgba(0, 26, 51, 0.2); }
+.card:hover h3 { color: var(--white); }
+.card:hover h3::after { width: 60px; background: var(--white); }
+.card:hover p { color: rgba(255, 255, 255, 0.8); }
 
 .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 15px; }
 .portfolio-item { height: 450px; overflow: hidden; background: #000; border-radius: 4px; }
