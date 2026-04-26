@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moment Studio | 모먼트 스튜디오</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 </head>
 <body>
 
@@ -21,7 +22,7 @@
     </header>
 
     <section class="hero">
-        <div class="hero-content">
+        <div class="hero-content" data-aos="fade-up" data-aos-duration="1500">
             <h1>Beyond the Moment</h1>
             <p>찰나의 기록을 넘어 지역의 가치를 브랜드로 만듭니다.</p>
         </div>
@@ -30,22 +31,31 @@
         </video>
     </section>
 
-    <section id="about" class="content-section">
+    <section id="about" class="content-section" data-aos="fade-up">
         <h2>ABOUT</h2>
         <p>모먼트 스튜디오는 시각적 기록을 통해 로컬의 고유한 이야기를 발굴합니다.<br>
         우리는 단순한 촬영을 넘어, 지역과 사람이 상생하는 아카이빙을 지향합니다.</p>
     </section>
 
     <section id="business" class="content-section">
-        <h2>BUSINESS</h2>
+        <h2 data-aos="fade-up">BUSINESS</h2>
         <div class="business-grid">
-            <div class="card"><h3>Photography</h3><p>상업 및 로컬 브랜딩 촬영</p></div>
-            <div class="card"><h3>Cinematic</h3><p>드론 및 홍보 영상 제작</p></div>
-            <div class="card"><h3>Archiving</h3><p>지역 자산 기록 및 편집</p></div>
+            <div class="card" data-aos="fade-up" data-aos-delay="100">
+                <h3>Photography</h3>
+                <p>상업 및 로컬 브랜딩 촬영</p>
+            </div>
+            <div class="card" data-aos="fade-up" data-aos-delay="200">
+                <h3>Cinematic</h3>
+                <p>드론 및 홍보 영상 제작</p>
+            </div>
+            <div class="card" data-aos="fade-up" data-aos-delay="300">
+                <h3>Archiving</h3>
+                <p>지역 자산 기록 및 편집</p>
+            </div>
         </div>
     </section>
 
-    <section id="contact" class="content-section">
+    <section id="contact" class="content-section" data-aos="fade-up">
         <h2>CONTACT</h2>
         <form class="contact-form">
             <input type="text" placeholder="성함/업체명">
@@ -62,11 +72,18 @@
             <p>&copy; 2026 Moment Studio. All Rights Reserved.</p>
         </div>
         <div class="footer-sns">
-            <a href="#">INSTAGRAM</a>
-            <a href="#">BLOG</a>
-            <a href="#">YOUTUBE</a>
+            <a href="https://www.instagram.com/sungan__studio?igsh=cGU4d3M3aHcwNHV6" target="_blank">INSTAGRAM</a>
+            <a href="https://blog.naver.com/지호님아이디" target="_blank">BLOG</a>
+            <a href="https://www.youtube.com/지호님채널" target="_blank">YOUTUBE</a>
         </div>
     </footer>
 
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+    </script>
 </body>
 </html>
