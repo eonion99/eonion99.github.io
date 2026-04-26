@@ -125,14 +125,9 @@
         window.addEventListener('scroll', function() {
             let value = window.scrollY;
             
-            // 스크롤 할수록 글자가 투명해지고 약간 위로 올라감
             heroText.style.opacity = 1 - value / 600;
-            heroText.style.transform = `translate(-50%, calc(-50% - ${value * 0.5}px))`;
-            
-            // 스크롤 할수록 네이비 필터도 투명해져서 영상이 선명해짐
+            heroText.style.transform = `translate(-50%, calc(-50% - ${value * 0.2}px))`;
             heroOverlay.style.opacity = 1 - value / 800;
-
-            // 스크롤 아이콘 숨기기
             scrollIcon.style.opacity = 1 - value / 200;
         });
 
