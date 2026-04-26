@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moment Studio | 모먼트 스튜디오</title>
     <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            // 지호님의 퍼블릭키 적용
+            emailjs.init("U-KBtRQ_7zTQrr6fp"); 
+        })();
+    </script>
 </head>
 <body>
 
@@ -23,8 +30,8 @@
     <section class="hero">
         <div class="hero-content">
             <span class="hero-sub">PREMIUM VISUAL ARCHIVING</span>
-            <h1>We Capture<br><span class="highlight">Unfading Value.</span></h1>
-            <p>단순한 기록을 넘어, 로컬의 숨겨진 가치를 감각적인 영상으로 증명합니다.</p>
+            <h1>Recording Today,<br><span class="highlight">Rewriting Tomorrow.</span></h1>
+            <p>오늘의 기록이 내일의 역사가 됩니다. 우리는 로컬의 숨겨진 가치를 시각적 자산으로 재구성합니다.</p>
             <div class="hero-btns">
                 <a href="#portfolio" class="btn-primary">VIEW PROJECTS</a>
                 <a href="#contact" class="btn-secondary">LET'S TALK</a>
@@ -47,8 +54,7 @@
         <div class="container">
             <span class="section-tag">BRAND STORY</span>
             <h2>모먼트 스튜디오는<br>이야기를 발굴합니다.</h2>
-            <p>단순한 촬영을 넘어, 지역과 사람이 상생하는 아카이빙을 지향하며<br>
-            로컬 고유의 이야기를 시각적 자산으로 변환합니다.</p>
+            <p>단순한 촬영을 넘어, 지역과 사람이 상생하는 아카이빙을 지향하며<br>로컬 고유의 이야기를 시각적 자산으로 변환합니다.</p>
         </div>
     </section>
 
@@ -86,11 +92,11 @@
     <section id="contact" class="content-section navy-bg">
         <div class="container">
             <h2 class="white-text">CONTACT</h2>
-            <form class="contact-form">
-                <input type="text" placeholder="성함/업체명">
-                <input type="email" placeholder="이메일 주소">
-                <textarea rows="5" placeholder="프로젝트 문의 내용을 입력해주세요."></textarea>
-                <button type="submit">SEND MESSAGE</button>
+            <form id="contact-form" class="contact-form">
+                <input type="text" name="from_name" placeholder="성함/업체명" required>
+                <input type="email" name="reply_to" placeholder="이메일 주소" required>
+                <textarea name="message" rows="5" placeholder="프로젝트 문의 내용을 입력해주세요." required></textarea>
+                <button type="submit" id="submit-btn">SEND MESSAGE</button>
             </form>
         </div>
     </section>
@@ -110,5 +116,28 @@
         </div>
     </footer>
 
+    <script type="text/javascript">
+        const btn = document.getElementById('submit-btn');
+
+        document.getElementById('contact-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            btn.innerText = 'SENDING...';
+
+            // 지호님이 스샷으로 보내주신 ID들입니다.
+            const serviceID = 'service_ibx467p'; 
+            const templateID = 'template_o4vldry';
+
+            emailjs.sendForm(serviceID, templateID, this)
+                .then(() => {
+                    btn.innerText = 'SEND MESSAGE';
+                    alert('문의가 성공적으로 전달되었습니다! 곧 회신드리겠습니다.');
+                    document.getElementById('contact-form').reset();
+                }, (err) => {
+                    btn.innerText = 'SEND MESSAGE';
+                    alert('전송에 실패했습니다. 다시 시도해주시거나 메일로 직접 연락주세요.');
+                    console.log(JSON.stringify(err));
+                });
+        });
+    </script>
 </body>
 </html>
