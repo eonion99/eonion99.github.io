@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Moment Studio | Pro Admin v3</title>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; padding: 40px; background: #000a14; color: #fff; line-height: 1.6; }
+        .admin-box { max-width: 800px; margin: 0 auto; background: #001529; padding: 40px; border-radius: 12px; border: 1px solid #002b52; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        h1 { font-size: 1.8rem; margin-bottom: 30px; color: #007aff; border-left: 4px solid #007aff; padding-left: 15px; }
+        .input-group { margin-bottom: 25px; }
+        label { display: block; margin-bottom: 10px; font-size: 0.85rem; color: #aaa; text-transform: uppercase; font-weight: 700; }
+        input, textarea, select { width: 100%; padding: 15px; background: #000a14; border: 1px solid #002b52; color: #fff; border-radius: 8px; }
+        
+        .file-label { display: inline-block; padding: 12px 25px; background: #007aff; border-radius: 8px; cursor: pointer; font-size: 0.95rem; margin-bottom: 15px; font-weight: bold; }
+        
+        /* 사진 미리보기 그리드 */
+        #preview-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 15px; }
+        .preview-item { position: relative; width: 100%; aspect-ratio: 4/3; border-radius: 8px; border: 2px solid #002b52; overflow: hidden; background: #000; }
+        .preview-item img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* 컨트롤 버튼 (삭제/이동) */
+        .img-ctrl-btns { position: absolute; bottom: 0; left: 0; width: 100%; display: flex; background: rgba(0,0,0,0.7); }
+        .ctrl-btn { flex: 1; border: none; padding: 8px 0; color: white; cursor: pointer; font-size: 12px; transition: 0.2s; }
+        .ctrl-btn:hover { background: #007aff; }
+        .btn-del { background: rgba(255, 77, 77, 0.8); }
+        .btn-del:hover { background: #ff4d4d; }
+
+        .btn-area { display: flex; gap: 10px; margin-top: 30px; }
+        button.main-btn { flex: 1; padding: 20px; border: none; font-weight: 800; cursor: pointer; border-radius: 8px; font-size: 1.1rem; }
+        .btn-add { background: #007aff; color: #fff; }
+        .btn-update { background: #34c759; color: #fff; display: none; }
+        .btn-cancel { background: #555; color: #fff; display: none; }
+        
+        .loading { display: none; text-align: center; color: #34c759; margin-top: 20px; font-weight: bold; }
+        .list-section { margin-top: 60px; border-top: 1px solid #002b52; padding-top: 40px; }
+        .item { display: flex; justify-content: space-between; align-items: center; background: #000a14; padding: 20px; margin-bottom: 15px; border-radius: 10px; border: 1px solid #002b52; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-box">
+        <h1 id="form-title">Sequencing Admin</h1>
+        
+        <div class="input-group">
+            <label>Title</label>
+            <input type="text" id="title" placeholder="프로젝트 제목">
+        </div>
+        
+        <div class="input-group">
+            <label>Category</label>
+            <select id="category">
+                <option value="Local Archive">Local Archive</option>
+                <option value="Branding / Photo">Branding / Photo</option>
+                <option value="Cinematic Film">Cinematic Film</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Photos (첫 번째 사진이 썸네일이 됩니다)</label>
+            <label class="file-label" for="file-input">＋ 사진 추가하기</label>
+            <input type="file" id="file-input" accept="image/*" multiple style="display:none" onchange="handleFileSelect(this)">
+            
+            <div id="preview-container">
+                </div>
+        </div>
+
+        <div class="input-group">
+            <label>Short Description</label>
+            <input type="text" id="shortDesc" placeholder="목록용 짧은 설명">
+        </div>
+
+        <div class="input-group">
+            <label>Long Description</label>
+            <textarea id="longDesc" rows="4" placeholder="상세 아카이브 기록"></textarea>
+        </div>
+
+        <div class="btn-area">
+            <button id="add-btn" class="main-btn btn-add" onclick="saveProject(false)">신규 등록</button>
+            <button id="update-btn" class="main-btn btn-update" onclick="saveProject(true)">수정 완료</button>
+            <button id="cancel-btn" class="main-btn btn-cancel" onclick="resetForm()">취소</button>
+        </div>
+        <div class="loading" id="loading-text">🚀 처리 중...</div>
+        <div class="list-section" id="projectList"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHA8Wm7kqAzkuj5WPrhtuuveZduUtf7u0",
+            authDomain: "moment-studio-web.firebaseapp.com",
+            projectId: "moment-studio-web",
+            storageBucket: "moment-studio-web.firebasestorage.app",
+            messagingSenderId: "135282547692",
+            appId: "1:135282547692:web:3f6a9118aadd98e88e7ec9"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        let currentPhotos = []; 
+        let editId = null;
+
+        // 사진 선택 (기존 목록 뒤에 추가)
+        window.handleFileSelect = (input) => {
+            if (input.files) {
+                Array.from(input.files).forEach(file => {
+                    currentPhotos.push({ type: 'file', content: file });
+                });
+                renderPreviews();
+                input.value = '';
+            }
+        };
+
+        // 순서 이동 함수 (배열 인덱스 조작)
+        window.movePhoto = (index, direction) => {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= currentPhotos.length) return;
+            
+            const temp = currentPhotos[index];
+            currentPhotos[index] = currentPhotos[newIndex];
+            currentPhotos[newIndex] = temp;
+            renderPreviews();
+        };
+
+        // 미리보기 렌더링 (순서 이동 버튼 추가)
+        function renderPreviews() {
+            const container = document.getElementById('preview-container');
+            container.innerHTML = '';
+
+            currentPhotos.forEach((photo, index) => {
+                const div = document.createElement('div');
+                div.className = 'preview-item';
+                
+                const img = document.createElement('img');
+                img.src = photo.type === 'url' ? photo.content : URL.createObjectURL(photo.content);
+
+                const ctrlBox = document.createElement('div');
+                ctrlBox.className = 'img-ctrl-btns';
+                ctrlBox.innerHTML = `
+                    <button class="ctrl-btn" onclick="movePhoto(${index}, -1)">◀</button>
+                    <button class="ctrl-btn btn-del" onclick="removePhoto(${index})">삭제</button>
+                    <button class="ctrl-btn" onclick="movePhoto(${index}, 1)">▶</button>
+                `;
+
+                div.appendChild(img);
+                div.appendChild(ctrlBox);
+                container.appendChild(div);
+            });
+        }
+
+        window.removePhoto = (index) => {
+            currentPhotos.splice(index, 1);
+            renderPreviews();
+        };
+
+        // 저장 로직 (등록/수정 공통)
+        window.saveProject = async (isUpdate) => {
+            const title = document.getElementById('title').value;
+            if(!title || currentPhotos.length === 0) return alert("데이터를 입력해주세요!");
+
+            document.getElementById('loading-text').style.display = "block";
+            try {
+                const finalUrls = [];
+                for (let photo of currentPhotos) {
+                    if (photo.type === 'url') {
+                        finalUrls.push(photo.content);
+                    } else {
+                        const storageRef = ref(storage, `projects/${Date.now()}_${photo.content.name}`);
+                        const snap = await uploadBytes(storageRef, photo.content);
+                        finalUrls.push(await getDownloadURL(snap.ref));
+                    }
+                }
+
+                const payload = {
+                    title,
+                    category: document.getElementById('category').value,
+                    shortDesc: document.getElementById('shortDesc').value,
+                    longDesc: document.getElementById('longDesc').value,
+                    imageUrls: finalUrls,
+                    imageUrl: finalUrls[0], // 리스트의 첫 번째 사진을 대표 이미지로 사용
+                    updatedAt: new Date()
+                };
+
+                if (isUpdate) {
+                    await updateDoc(doc(db, "projects", editId), payload);
+                    alert("수정 완료!");
+                } else {
+                    await addDoc(collection(db, "projects"), { ...payload, createdAt: new Date() });
+                    alert("등록 완료!");
+                }
+                resetForm();
+            } catch (e) { alert("오류 발생!"); }
+            document.getElementById('loading-text').style.display = "none";
+        };
+
+        window.prepareEdit = (id, dataJson) => {
+            const data = JSON.parse(decodeURIComponent(dataJson));
+            editId = id;
+            currentPhotos = (data.imageUrls || [data.imageUrl]).map(url => ({ type: 'url', content: url }));
+            
+            document.getElementById('title').value = data.title;
+            document.getElementById('category').value = data.category;
+            document.getElementById('shortDesc').value = data.shortDesc;
+            document.getElementById('longDesc').value = data.longDesc;
+
+            document.getElementById('form-title').innerText = "Edit Project";
+            document.getElementById('add-btn').style.display = "none";
+            document.getElementById('update-btn').style.display = "block";
+            document.getElementById('cancel-btn').style.display = "block";
+            renderPreviews();
+            window.scrollTo(0,0);
+        };
+
+        window.resetForm = () => {
+            editId = null; currentPhotos = [];
+            document.querySelectorAll('input, textarea').forEach(i => i.value = '');
+            document.getElementById('preview-container').innerHTML = '';
+            document.getElementById('form-title').innerText = "Sequencing Admin";
+            document.getElementById('add-btn').style.display = "block";
+            document.getElementById('update-btn').style.display = "none";
+            document.getElementById('cancel-btn').style.display = "none";
+        };
+
+        window.deleteProject = async (id) => {
+            if(confirm("정말 삭제할까요?")) await deleteDoc(doc(db, "projects", id));
+        };
+
+        const q = query(collection(db, "projects"), orderBy("createdAt", "desc"));
+        onSnapshot(q, (snapshot) => {
+            const listDiv = document.getElementById('projectList');
+            listDiv.innerHTML = '<h3>Live Projects</h3>';
+            snapshot.forEach((docSnap) => {
+                const p = docSnap.data();
+                const pJson = encodeURIComponent(JSON.stringify(p));
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerHTML = `
+                    <div class="item-info"><span>${p.category}</span><h4>${p.title}</h4></div>
+                    <div class="item-btns">
+                        <button class="edit-btn" onclick="prepareEdit('${docSnap.id}', '${pJson}')">수정</button>
+                        <button class="del-btn" onclick="deleteProject('${docSnap.id}')">삭제</button>
+                    </div>
+                `;
+                listDiv.appendChild(div);
+            });
+        });
+    </script>
+</body>
+</html>

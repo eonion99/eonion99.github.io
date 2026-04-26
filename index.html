@@ -4,94 +4,106 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moment Studio | 모먼트 스튜디오</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="stylesheet" href="style.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
-        (function() {
-            emailjs.init("U-KBtRQ_7zTQrr6fp"); 
-        })();
+        (function() { emailjs.init("U-KBtRQ_7zTQrr6fp"); })();
     </script>
+    <style>
+        /* 필터 메뉴 스타일 */
+        .filter-menu { display: flex; justify-content: center; gap: 20px; margin-bottom: 50px; flex-wrap: wrap; }
+        .filter-btn { 
+            padding: 10px 25px; background: none; border: 1px solid #ddd; 
+            border-radius: 30px; cursor: pointer; font-size: 0.9rem; 
+            font-weight: 600; color: #666; transition: 0.3s; 
+        }
+        .filter-btn:hover { border-color: #007aff; color: #007aff; }
+        .filter-btn.active { background: #007aff; color: #fff; border-color: #007aff; }
+
+        /* 슬라이더 스타일 */
+        .slider-container { position: relative; width: 100%; height: 500px; background: #000; overflow: hidden; border-radius: 4px; }
+        .slider-wrapper { display: flex; transition: transform 0.5s ease-in-out; height: 100%; }
+        .slide { min-width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+        .slide img { width: 100%; height: 100%; object-fit: contain; }
+        .slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; padding: 15px 10px; cursor: pointer; font-size: 20px; z-index: 10; transition: 0.3s; }
+        .slider-btn:hover { background: #007aff; }
+        .btn-prev { left: 0; border-radius: 0 4px 4px 0; }
+        .btn-next { right: 0; border-radius: 4px 0 0 4px; }
+        .slider-dots { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10; }
+        .dot { width: 8px; height: 8px; background: rgba(255,255,255,0.5); border-radius: 50%; cursor: pointer; }
+        .dot.active { background: #007aff; width: 20px; border-radius: 10px; }
+
+        @media (max-width: 768px) { .slider-container { height: 300px; } }
+
+        /* 스크롤 효과를 위한 초기 설정 유지 */
+        #main-video { filter: brightness(0.6); transition: filter 0.1s ease-out; }
+    </style>
 </head>
 <body>
 
-    <header>
+    <header class="main-header">
         <nav class="navbar">
             <div class="logo">MOMENT STUDIO</div>
             <ul class="nav-links">
-                <li><a href="#about">ABOUT</a></li>
-                <li><a href="#business">BUSINESS</a></li>
-                <li><a href="#portfolio">PORTFOLIO</a></li>
-                <li><a href="#contact">CONTACT</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#portfolio">Work</a></li>
+                <li><a href="#contact">Contact</a></li>
             </ul>
         </nav>
     </header>
 
-    <section class="hero">
-        <div class="hero-content" id="hero-text">
-            <span class="hero-sub">PREMIUM VISUAL ARCHIVING</span>
-            <h1>Recording Today,<br><span class="highlight">Rewriting Tomorrow.</span></h1>
-            <p>오늘의 기록이 내일의 역사가 됩니다.<br>우리는 로컬의 숨겨진 가치를 시각적 자산으로 재구성합니다.</p>
-            <div class="hero-btns">
-                <a href="#portfolio" class="btn-primary">VIEW PROJECTS</a>
-                <a href="#contact" class="btn-secondary">LET'S TALK</a>
-            </div>
-        </div>
-
-        <video autoplay muted loop playsinline preload="auto" id="main-video">
-            <source src="main_bg_video.mp4" type="video/mp4">
-        </video>
-        
-        <div class="overlay" id="hero-overlay"></div>
-
-        <div class="scroll-indicator" id="scroll-icon">
-            <div class="mouse"></div>
-            <span>SCROLL DOWN</span>
-        </div>
-    </section>
-
-    <section id="about" class="content-section">
-        <div class="container">
-            <span class="section-tag">BRAND STORY</span>
-            <h2>모먼트 스튜디오는<br>이야기를 발굴합니다.</h2>
-            <p>단순한 촬영을 넘어, 지역과 사람이 상생하는 아카이빙을 지향하며<br>로컬 고유의 이야기를 시각적 자산으로 변환합니다.</p>
-        </div>
-    </section>
-
-    <section id="business" class="content-section grey-bg">
-        <div class="container">
-            <span class="section-tag">OUR SERVICES</span>
-            <h2>전문적인 비주얼 솔루션</h2>
-            <div class="business-grid">
-                <div class="card">
-                    <h3>Photography</h3>
-                    <p>브랜드의 가치를 높이는<br>고품질 상업 촬영 서비스를 제공합니다.</p>
-                </div>
-                <div class="card">
-                    <h3>Cinematic Film</h3>
-                    <p>감각적인 드론 촬영과 편집으로<br>몰입감 있는 영상 콘텐츠를 제작합니다.</p>
-                </div>
-                <div class="card">
-                    <h3>Archiving</h3>
-                    <p>지역의 자산과 기록을 보존하여<br>디지털 아카이빙 프로젝트를 수행합니다.</p>
+    <section class="hero-container">
+        <div class="sticky-wrapper">
+            <video autoplay muted loop playsinline preload="auto" id="main-video">
+                <source src="main_bg_video.mp4" type="video/mp4">
+            </video>
+            <div class="overlay" id="hero-overlay"></div>
+            <div class="hero-content" id="hero-text">
+                <span class="hero-sub">PREMIUM VISUAL ARCHIVING</span>
+                <h1 class="hero-title">Recording Today,<br><span class="highlight">Rewriting Tomorrow.</span></h1>
+                <div class="hero-btns">
+                    <a href="#portfolio" class="btn-primary">View Work</a>
+                    <a href="#contact" class="btn-secondary">Get in touch</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="portfolio" class="content-section">
+    <section id="about" class="content-section white-bg">
         <div class="container">
-            <h2>PORTFOLIO</h2>
-            <div class="portfolio-grid">
-                <div class="portfolio-item"><img src="pic1.JPG" alt="Moment 1"></div>
-                <div class="portfolio-item"><img src="pic2.jpg" alt="Moment 2"></div>
-                <div class="portfolio-item"><img src="pic3.jpg" alt="Moment 3"></div>
-            </div>
+            <div class="brand-badge">BRAND STORY</div>
+            <h2 class="section-main-title">모먼트 스튜디오는<br>숨겨진 서사를 <span class="accent">발굴</span>합니다.</h2>
+            <p class="section-desc">단순한 촬영을 넘어, 지역과 사람이 상생하는 아카이빙을 지향하며<br>로컬 고유의 이야기를 시각적 자산으로 변환합니다.</p>
         </div>
     </section>
+
+    <section id="portfolio" class="content-section white-bg">
+        <div class="container">
+            <span class="section-tag">SELECTED WORK</span>
+            <h2 class="section-main-title">Project Archive</h2>
+
+            <div class="filter-menu">
+                <button class="filter-btn active" onclick="filterProjects('all', this)">All</button>
+                <button class="filter-btn" onclick="filterProjects('Local Archive', this)">Local Archive</button>
+                <button class="filter-btn" onclick="filterProjects('Branding / Photo', this)">Branding / Photo</button>
+                <button class="filter-btn" onclick="filterProjects('Cinematic Film', this)">Cinematic Film</button>
+            </div>
+
+            <div class="portfolio-grid" id="main-portfolio-grid"></div>
+        </div>
+    </section>
+
+    <div id="project-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="modal-close-btn">&times;</span>
+            <div class="modal-body" id="modal-data"></div>
+        </div>
+    </div>
 
     <section id="contact" class="content-section navy-bg">
         <div class="container">
-            <h2 class="white-text">CONTACT</h2>
+            <h2 class="white-text">Contact Us</h2>
             <form id="contact-form" class="contact-form">
                 <input type="text" name="from_name" placeholder="성함/업체명" required>
                 <input type="email" name="reply_to" placeholder="이메일 주소" required>
@@ -102,50 +114,146 @@
     </section>
 
     <footer>
-        <div class="footer-container">
-            <div class="footer-info">
-                <h3>MOMENT STUDIO</h3>
-                <p>대표자: 최지호 | eonion99@email.com</p>
-                <p>&copy; 2026 Moment Studio. All Rights Reserved.</p>
-            </div>
-            <div class="footer-sns">
-                <a href="https://www.instagram.com/sungan__studio" target="_blank">INSTAGRAM</a>
-                <a href="#" target="_blank">BLOG</a>
-                <a href="#" target="_blank">YOUTUBE</a>
-            </div>
+        <div class="container">
+            <h3>MOMENT STUDIO</h3>
+            <p>최지호 | eonion99@email.com | &copy; 2026</p>
         </div>
     </footer>
 
-    <script type="text/javascript">
-        // 1. 스크롤 애니메이션
-        const heroText = document.getElementById('hero-text');
-        const heroOverlay = document.getElementById('hero-overlay');
-        const scrollIcon = document.getElementById('scroll-icon');
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHA8Wm7kqAzkuj5WPrhtuuveZduUtf7u0",
+            authDomain: "moment-studio-web.firebaseapp.com",
+            projectId: "moment-studio-web",
+            storageBucket: "moment-studio-web.firebasestorage.app",
+            messagingSenderId: "135282547692",
+            appId: "1:135282547692:web:3f6a9118aadd98e88e7ec9"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let allProjects = []; 
+        let currentSlide = 0;
+
+        // --- 스크롤 효과 스크립트 추가 ---
         window.addEventListener('scroll', function() {
-            let value = window.scrollY;
-            
-            heroText.style.opacity = 1 - value / 600;
-            heroText.style.transform = `translate(-50%, calc(-50% - ${value * 0.2}px))`;
-            heroOverlay.style.opacity = 1 - value / 800;
-            scrollIcon.style.opacity = 1 - value / 200;
+            const scrollY = window.scrollY;
+            const heroText = document.getElementById('hero-text');
+            const mainVideo = document.getElementById('main-video');
+            const fadeOutPoint = 600; // 글자가 완전히 사라지는 지점 (조절 가능)
+
+            // 1. 글자 투명도 조절
+            let opacity = 1 - (scrollY / fadeOutPoint);
+            if (opacity < 0) opacity = 0;
+            if (heroText) heroText.style.opacity = opacity;
+
+            // 2. 영상 밝기 조절 (0.6에서 1.0으로)
+            let brightness = 0.6 + (0.4 * (scrollY / fadeOutPoint));
+            if (brightness > 1) brightness = 1;
+            if (mainVideo) mainVideo.style.filter = `brightness(${brightness})`;
+
+            // 3. 클릭 방지
+            if (opacity <= 0) {
+                heroText.style.pointerEvents = 'none';
+            } else {
+                heroText.style.pointerEvents = 'auto';
+            }
+        });
+        // ------------------------------
+
+        const q = query(collection(db, "projects"), orderBy("createdAt", "desc"));
+        onSnapshot(q, (snapshot) => {
+            allProjects = []; 
+            snapshot.forEach((docSnap) => {
+                allProjects.push({ id: docSnap.id, ...docSnap.data() });
+            });
+            renderProjects(allProjects); 
         });
 
-        // 2. 메일 전송
-        const btn = document.getElementById('submit-btn');
-        document.getElementById('contact-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            btn.innerText = 'SENDING...';
-            emailjs.sendForm('service_ibx467p', 'template_o4vldry', this)
-                .then(() => {
-                    btn.innerText = 'SEND MESSAGE';
-                    alert('문의가 성공적으로 전달되었습니다!');
-                    document.getElementById('contact-form').reset();
-                }, (err) => {
-                    btn.innerText = 'SEND MESSAGE';
-                    alert('전송 실패!');
-                });
-        });
+        function renderProjects(projects) {
+            const grid = document.getElementById('main-portfolio-grid');
+            grid.innerHTML = '';
+            
+            projects.forEach((p) => {
+                const card = document.createElement('div');
+                card.className = 'work-card';
+                card.onclick = () => openProjectModal(p);
+                card.innerHTML = `
+                    <div class="work-img"><img src="${p.imageUrl}" alt="${p.title}"></div>
+                    <div class="work-info">
+                        <span class="work-cat">${p.category}</span>
+                        <h3>${p.title}</h3>
+                        <p>${p.shortDesc}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        window.filterProjects = (category, btn) => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            if (category === 'all') {
+                renderProjects(allProjects);
+            } else {
+                const filtered = allProjects.filter(p => p.category === category);
+                renderProjects(filtered);
+            }
+        };
+
+        function openProjectModal(p) {
+            const modal = document.getElementById('project-modal');
+            const modalData = document.getElementById('modal-data');
+            const images = p.imageUrls || [p.imageUrl];
+            currentSlide = 0;
+
+            const slidesHtml = images.map(url => `<div class="slide"><img src="${url}"></div>`).join('');
+            const dotsHtml = images.length > 1 ? images.map((_, i) => `<div class="dot ${i===0?'active':''}" onclick="moveSlide(${i})"></div>`).join('') : '';
+
+            modalData.innerHTML = `
+                <div class="modal-grid">
+                    <div class="slider-container">
+                        ${images.length > 1 ? `<button class="slider-btn btn-prev" id="prevBtn">◀</button>` : ''}
+                        <div class="slider-wrapper" id="sliderWrapper">${slidesHtml}</div>
+                        ${images.length > 1 ? `<button class="slider-btn btn-next" id="nextBtn">▶</button>` : ''}
+                        <div class="slider-dots">${dotsHtml}</div>
+                    </div>
+                    <div class="modal-info">
+                        <span class="work-cat">${p.category}</span>
+                        <h2 class="modal-title">${p.title}</h2>
+                        <div class="modal-divider"></div>
+                        <p class="modal-desc">${p.longDesc || p.shortDesc}</p>
+                    </div>
+                </div>
+            `;
+            modal.style.display = "flex";
+            document.body.style.overflow = "hidden";
+
+            if(images.length > 1) {
+                document.getElementById('prevBtn').onclick = () => moveSlide(currentSlide - 1, images.length);
+                document.getElementById('nextBtn').onclick = () => moveSlide(currentSlide + 1, images.length);
+            }
+        }
+
+        window.moveSlide = (n, total) => {
+            const wrapper = document.getElementById('sliderWrapper');
+            const dots = document.querySelectorAll('.dot');
+            if (n >= total) n = 0;
+            if (n < 0) n = total - 1;
+            currentSlide = n;
+            wrapper.style.transform = `translateX(-${n * 100}%)`;
+            dots.forEach((dot, i) => dot.classList.toggle('active', i === n));
+        };
+
+        document.getElementById('modal-close-btn').onclick = () => {
+            document.getElementById('project-modal').style.display = "none";
+            document.body.style.overflow = "auto";
+        };
     </script>
 </body>
 </html>
