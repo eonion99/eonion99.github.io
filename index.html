@@ -8,7 +8,6 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
         (function() {
-            // 지호님의 퍼블릭키 적용
             emailjs.init("U-KBtRQ_7zTQrr6fp"); 
         })();
     </script>
@@ -28,7 +27,7 @@
     </header>
 
     <section class="hero">
-        <div class="hero-content">
+        <div class="hero-content" id="hero-text">
             <span class="hero-sub">PREMIUM VISUAL ARCHIVING</span>
             <h1>Recording Today,<br><span class="highlight">Rewriting Tomorrow.</span></h1>
             <p>오늘의 기록이 내일의 역사가 됩니다.<br>우리는 로컬의 숨겨진 가치를 시각적 자산으로 재구성합니다.</p>
@@ -42,9 +41,9 @@
             <source src="main_bg_video.mp4" type="video/mp4">
         </video>
         
-        <div class="overlay"></div>
+        <div class="overlay" id="hero-overlay"></div>
 
-        <div class="scroll-indicator">
+        <div class="scroll-indicator" id="scroll-icon">
             <div class="mouse"></div>
             <span>SCROLL DOWN</span>
         </div>
@@ -118,24 +117,38 @@
     </footer>
 
     <script type="text/javascript">
-        const btn = document.getElementById('submit-btn');
+        // 1. 스크롤 애니메이션
+        const heroText = document.getElementById('hero-text');
+        const heroOverlay = document.getElementById('hero-overlay');
+        const scrollIcon = document.getElementById('scroll-icon');
 
+        window.addEventListener('scroll', function() {
+            let value = window.scrollY;
+            
+            // 스크롤 할수록 글자가 투명해지고 약간 위로 올라감
+            heroText.style.opacity = 1 - value / 600;
+            heroText.style.transform = `translate(-50%, calc(-50% - ${value * 0.5}px))`;
+            
+            // 스크롤 할수록 네이비 필터도 투명해져서 영상이 선명해짐
+            heroOverlay.style.opacity = 1 - value / 800;
+
+            // 스크롤 아이콘 숨기기
+            scrollIcon.style.opacity = 1 - value / 200;
+        });
+
+        // 2. 메일 전송
+        const btn = document.getElementById('submit-btn');
         document.getElementById('contact-form').addEventListener('submit', function(event) {
             event.preventDefault();
             btn.innerText = 'SENDING...';
-
-            const serviceID = 'service_ibx467p'; 
-            const templateID = 'template_o4vldry';
-
-            emailjs.sendForm(serviceID, templateID, this)
+            emailjs.sendForm('service_ibx467p', 'template_o4vldry', this)
                 .then(() => {
                     btn.innerText = 'SEND MESSAGE';
-                    alert('문의가 성공적으로 전달되었습니다! 곧 회신드리겠습니다.');
+                    alert('문의가 성공적으로 전달되었습니다!');
                     document.getElementById('contact-form').reset();
                 }, (err) => {
                     btn.innerText = 'SEND MESSAGE';
-                    alert('전송에 실패했습니다. 다시 시도해주시거나 메일로 직접 연락주세요.');
-                    console.log(JSON.stringify(err));
+                    alert('전송 실패!');
                 });
         });
     </script>
